@@ -11,7 +11,7 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okio.IOException
 
-private const val apiKey = "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"
+private const val apiKey = "YOUR-API-KEY"
 private const val apiUrl = "https://api.openai.com/v1/completions"
 
 fun sendRequest2ToChatGPT(text: String): MutableList<Choice> {
