@@ -1,7 +1,7 @@
 package com.example.chatgpttest.repository
 
 import com.example.chatgpttest.model.ChatGptPayload
-import com.example.chatgpttest.model.ChatGptResponse
+import com.example.chatgpttest.model.ChatGPTResponse
 import com.example.chatgpttest.model.Choice
 import com.google.gson.Gson
 import okhttp3.Headers.Companion.toHeaders
@@ -42,7 +42,7 @@ fun sendRequest2ToChatGPT(text: String): MutableList<Choice> {
         val response = httpClient.newCall(request).execute()
         if (response.isSuccessful) {
             val responseBody = response.body?.string()
-            val gptResponse = gson.fromJson(responseBody, ChatGptResponse::class.java)
+            val gptResponse = gson.fromJson(responseBody, ChatGPTResponse::class.java)
             mutableListOf(Choice(gptResponse.choices[0].text))
         } else {
             mutableListOf(Choice("Error: ${response.code}"))

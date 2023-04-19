@@ -2,28 +2,28 @@ package com.example.chatgpttest.viewmodel
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.chatgpttest.model.Choice
-import com.example.chatgpttest.repository.sendRequest2ToChatGPT
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import com.example.chatgpttest.repository.ChatGPTRepository
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ViewModel : ViewModel() {
+class ChatGPTViewModel @Inject constructor(private val repository: ChatGPTRepository) :
+    ViewModel() {
 
     val itemList = mutableStateListOf<Choice>()
-    val mainScope = CoroutineScope(Dispatchers.IO)
 
     fun resetChat() {
         itemList.clear()
     }
 
     fun updateChat(choice: Choice) {
-        mainScope.launch {
+        viewModelScope.launch {
             itemList.add(choice)
             itemList.add(Choice("Typing..."))
-            val result = sendRequest2ToChatGPT(choice.text)
+            val result = repository.getResponse(choice.text)?.choices
             itemList.remove(Choice("Typing..."))
-            itemList.add(Choice(result[0].text.trim()))
+            itemList.add(Choice(result?.get(0)?.text?.trim() ?: ""))
         }
     }
 }

@@ -1,16 +1,16 @@
 package com.example.chatgpttest.data
 
-import com.example.chatgpttest.model.ChatGptPayload
-import com.example.chatgpttest.model.ChatGptResponse
-import retrofit2.Call
+import com.example.chatgpttest.model.ChatGPTResponse
+import okhttp3.RequestBody
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.POST
 
-interface ChatGptApi {
+interface ChatGPTApi {
     @POST("v1/completions")
     fun getGeneratedText(
         @Header("Authorization") apiKey: String,
-        @Body payload: ChatGptPayload
-    ): Call<ChatGptResponse>
+        @Body requestBody: RequestBody
+    ): Response<ChatGPTResponse>
 }
