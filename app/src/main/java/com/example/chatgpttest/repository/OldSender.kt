@@ -1,8 +1,6 @@
 package com.example.chatgpttest.repository
 
-import com.example.chatgpttest.model.ChatGptPayload
-import com.example.chatgpttest.model.ChatGPTResponse
-import com.example.chatgpttest.model.Choice
+import com.example.chatgpttest.model.*
 import com.google.gson.Gson
 import okhttp3.Headers.Companion.toHeaders
 import okhttp3.MediaType.Companion.toMediaType
@@ -14,7 +12,7 @@ import okio.IOException
 private const val apiKey = "YOUR-API-KEY"
 private const val apiUrl = "https://api.openai.com/v1/completions"
 
-fun sendRequest2ToChatGPT(text: String): MutableList<Choice> {
+suspend fun sendRequest2ToChatGPT(text: String): MutableList<Choice> {
     val httpClient = OkHttpClient()
     val gson = Gson()
 
@@ -26,9 +24,15 @@ fun sendRequest2ToChatGPT(text: String): MutableList<Choice> {
 
     val requestBody = ChatGptPayload(
         prompt = text,
-        max_tokens = 4000,
+        maxTokens = 4000,
         n = 1,
-        temperature = 1.0
+        temperature = 1.0,
+        messages = listOf(
+            ChatGptMessage(
+                role = "user",
+                content = text
+            )
+        )
     )
     val json = gson.toJson(requestBody)
 

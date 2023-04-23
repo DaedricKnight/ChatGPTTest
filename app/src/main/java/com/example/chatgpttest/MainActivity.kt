@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelProvider
+import com.example.chatgpttest.di.DaggerApplicationComponent
 import com.example.chatgpttest.ui.theme.ChatGPTTestTheme
 import com.example.chatgpttest.viewmodel.ChatGPTViewModel
 import javax.inject.Inject
@@ -25,7 +26,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        (application as ChatGPTApplication).appComponent.inject(this)
+        DaggerApplicationComponent.create().inject(this)
 
         setContent {
             ChatGPTTestTheme {

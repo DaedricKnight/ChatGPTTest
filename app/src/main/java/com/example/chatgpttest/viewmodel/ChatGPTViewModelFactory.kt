@@ -7,7 +7,7 @@ import javax.inject.Provider
 
 
 class ChatGPTViewModelFactory @Inject constructor(
-    private val chatGPTViewModelProvider: Provider<ViewModel>
+    private val chatGPTViewModelProvider: Provider<ChatGPTViewModel>
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return chatGPTViewModelProvider.get() as T
