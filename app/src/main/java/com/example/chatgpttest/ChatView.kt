@@ -42,14 +42,16 @@ fun ChatList(
     chatGPTViewModel: ChatGPTViewModel,
     modifier: Modifier = Modifier,
 ) {
+    val conversations: List<Choice> by chatGPTViewModel.conversationsState.collectAsState()
+
     Box(modifier = Modifier) {
         Box(
             modifier = modifier,
             contentAlignment = Alignment.BottomEnd
         ) {
             LazyColumn {
-                items(chatGPTViewModel.itemList.size) { item ->
-                    ChatBubbleView(item % 2 == 0, Choice(chatGPTViewModel.itemList[item].text))
+                items(conversations.size) { item ->
+                    ChatBubbleView(item % 2 == 0, Choice(conversations[item].text))
                 }
             }
         }
