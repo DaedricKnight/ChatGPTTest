@@ -1,4 +1,4 @@
-package com.example.chatgpttest.repository
+package com.example.chatgpttest.data.repository
 
 import com.example.chatgpttest.model.*
 import com.google.gson.Gson
@@ -22,14 +22,14 @@ suspend fun sendRequest2ToChatGPT(text: String): MutableList<Choice> {
         "Authorization" to "Bearer $apiKey"
     )
 
-    val requestBody = ChatGptPayload(
+    val requestBody = ChatGPTPayload(
         prompt = text,
         maxTokens = 4000,
         n = 1,
         temperature = 1.0,
         messages = listOf(
-            ChatGptMessage(
-                role = "user",
+            ChatGPTMessage(
+                role = Role.user,
                 content = text
             )
         )

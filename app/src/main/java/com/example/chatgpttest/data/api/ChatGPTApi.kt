@@ -1,4 +1,4 @@
-package com.example.chatgpttest.data
+package com.example.chatgpttest.data.api
 
 import com.example.chatgpttest.constants.CompletionsEndpoint
 import com.example.chatgpttest.model.ChatGPTResponse

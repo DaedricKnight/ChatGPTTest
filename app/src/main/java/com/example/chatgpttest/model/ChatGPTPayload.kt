@@ -2,7 +2,7 @@ package com.example.chatgpttest.model
 
 import com.google.gson.JsonObject
 
-data class ChatGptPayload(
+data class ChatGPTPayload(
     val model: String = "text-davinci-003",
     val prompt: String,
     val maxTokens: Int,
@@ -11,15 +11,15 @@ data class ChatGptPayload(
     val temperature: Double = 1.0,
     val top_p: Int = 1,
     val stop: String? = null,
-    val messages: List<ChatGptMessage>
+    val messages: List<ChatGPTMessage>
 )
 
-data class ChatGptMessage(
-    val role: String,
+data class ChatGPTMessage(
+    val role: Role,
     val content: String
 )
 
-fun ChatGptPayload.toJson(): JsonObject {
+fun ChatGPTPayload.toJson(): JsonObject {
     val json = JsonObject()
     json.addProperty("temperature", temperature)
     json.addProperty("stream", stream)

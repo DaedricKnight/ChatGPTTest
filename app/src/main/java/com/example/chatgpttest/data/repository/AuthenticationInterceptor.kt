@@ -1,9 +1,8 @@
-package com.example.chatgpttest.repository
+package com.example.chatgpttest.data.repository
 
+import com.example.chatgpttest.constants.apiKey
 import okhttp3.Interceptor
 import okhttp3.Response
-
-private const val apiKey = "YOU-API-KEY"
 
 class AuthenticationInterceptor:  Interceptor {
 
