@@ -19,19 +19,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.example.chatgpttest.model.Choice
-import com.example.chatgpttest.viewmodel.ViewModel
+import com.example.chatgpttest.viewmodel.ChatGPTViewModel
 
 @Composable
 fun ChatScreen(
-    viewModel: ViewModel
+    chatGPTViewModel: ChatGPTViewModel
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         ChatList(
-            viewModel = viewModel,
+            chatGPTViewModel = chatGPTViewModel,
             modifier = Modifier.height(760.dp),
         )
         CharInput(
-            viewModel = viewModel,
+            chatGPTViewModel = chatGPTViewModel,
             modifier = Modifier
         )
     }
@@ -39,17 +39,19 @@ fun ChatScreen(
 
 @Composable
 fun ChatList(
-    viewModel: ViewModel,
+    chatGPTViewModel: ChatGPTViewModel,
     modifier: Modifier = Modifier,
 ) {
+    val conversations: List<Choice> by chatGPTViewModel.conversationsState.collectAsState()
+
     Box(modifier = Modifier) {
         Box(
             modifier = modifier,
             contentAlignment = Alignment.BottomEnd
         ) {
             LazyColumn {
-                items(viewModel.itemList.size) { item ->
-                    ChatBubbleView(item % 2 == 0, Choice(viewModel.itemList[item].text))
+                items(conversations.size) { item ->
+                    ChatBubbleView(item % 2 == 0, Choice(conversations[item].text))
                 }
             }
         }
@@ -99,7 +101,7 @@ fun cardShapeFor(isLeft: Boolean): Shape {
 
 @Composable
 fun CharInput(
-    viewModel: ViewModel,
+    chatGPTViewModel: ChatGPTViewModel,
     modifier: Modifier = Modifier,
 ) {
     var value by remember {
@@ -107,7 +109,7 @@ fun CharInput(
     }
 
     fun sendMessage() {
-        viewModel.updateChat(Choice(value))
+        chatGPTViewModel.updateChat(Choice(value))
         value = ""
     }
     Row(
@@ -136,7 +138,7 @@ fun CharInput(
 
 @Composable
 fun BottomBar(
-    viewModel: ViewModel,
+    chatGPTViewModel: ChatGPTViewModel,
 ) {
     var value by remember {
         mutableStateOf("")
