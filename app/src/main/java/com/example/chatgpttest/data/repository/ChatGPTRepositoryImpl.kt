@@ -1,21 +1,22 @@
 package com.example.chatgpttest.data.repository
 
+import com.example.chatgpttest.constants.emptyResponse
+import com.example.chatgpttest.constants.errorId
+import com.example.chatgpttest.constants.errorObject
+import com.example.chatgpttest.constants.temperature
 import com.example.chatgpttest.data.api.ChatGPTApi
-import com.example.chatgpttest.model.ChatGPTMessage
-import com.example.chatgpttest.model.ChatGPTPayload
-import com.example.chatgpttest.model.Role
-import com.example.chatgpttest.model.toJson
+import com.example.chatgpttest.model.*
 import javax.inject.Inject
 
 class ChatGPTRepositoryImpl @Inject constructor(private val chatGPTApi: ChatGPTApi) :
     ChatGPTRepository {
-    override suspend fun getCompletionResponse(inputText: String): String {
+    override suspend fun getCompletionResponse(inputText: String, maxTokens: Int, n: Int): ChatGPTResponse {
 
         val requestBody = ChatGPTPayload(
             prompt = inputText,
-            maxTokens = 4000,
-            n = 1,
-            temperature = 1.0,
+            maxTokens = maxTokens,
+            n = n,
+            temperature = temperature,
             messages = listOf(
                 ChatGPTMessage(
                     role = Role.user,
@@ -27,9 +28,33 @@ class ChatGPTRepositoryImpl @Inject constructor(private val chatGPTApi: ChatGPTA
         val response = chatGPTApi.getGeneratedText(requestBody.toJson())
 
         return if (response.isSuccessful) {
-            response.body()?.choices?.get(0)?.text ?: "Empty response"
+            if (response.body() != null) {
+                response.body()!!
+            } else {
+                ChatGPTResponse(
+                    id = errorId,
+                    choices = listOf(
+                        ChatGPTChoice(
+                            text = emptyResponse,
+                            index = 1,
+                            isChatGPT = true
+                        )
+                    ),
+                    objectType = errorObject
+                )
+            }
         } else {
-            "Error Code = ${response.code()}"
+            ChatGPTResponse(
+                id = errorId,
+                choices = listOf(
+                    ChatGPTChoice(
+                        text = "Error Code = ${response.code()}",
+                        index = 1,
+                        isChatGPT = true
+                    )
+                ),
+                objectType = errorObject
+            )
         }
     }
 }

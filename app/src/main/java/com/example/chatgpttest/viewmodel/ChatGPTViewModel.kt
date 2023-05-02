@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatgpttest.data.repository.ChatGPTRepository
-import com.example.chatgpttest.model.Choice
+import com.example.chatgpttest.model.ChatGPTChoice
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,26 +16,35 @@ class ChatGPTViewModel @Inject constructor(
 ) :
     ViewModel() {
 
-    private val _conversations: MutableStateFlow<MutableList<Choice>> = MutableStateFlow(
+    private val _conversations: MutableStateFlow<MutableList<ChatGPTChoice>> = MutableStateFlow(
         mutableListOf()
     )
-    val conversationsState: StateFlow<MutableList<Choice>> = _conversations.asStateFlow()
+    val conversationsState: StateFlow<MutableList<ChatGPTChoice>> = _conversations.asStateFlow()
 
     fun resetChat() {
         _conversations.value.clear()
     }
 
-    fun updateChat(choice: Choice) {
+    fun updateChat(choice: ChatGPTChoice) {
         viewModelScope.launch {
             changeMessage(choice, isAdding = true)
-            changeMessage(Choice("Typing..."), isAdding = true)
+            val typing = ChatGPTChoice("Typing...", index = 0, isChatGPT = true)
+            changeMessage(typing, isAdding = true)
             val result = repository.getCompletionResponse(choice.text)
-            changeMessage(Choice("Typing..."), isAdding = false)
-            changeMessage(Choice(result.trim()), isAdding = true)
+            changeMessage(typing, isAdding = false)
+            for (i in result.choices.indices) {
+                changeMessage(
+                    ChatGPTChoice(
+                        result.choices[i].text.trim(),
+                        index = 1 + i,
+                        isChatGPT = true
+                    ), isAdding = true
+                )
+            }
         }
     }
 
-    private fun changeMessage(choice: Choice, isAdding: Boolean) {
+    private fun changeMessage(choice: ChatGPTChoice, isAdding: Boolean) {
         val newList = _conversations.value.toMutableList()
         if (isAdding) {
             newList.add(choice)

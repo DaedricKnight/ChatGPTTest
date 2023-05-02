@@ -24,7 +24,7 @@ class ChatGPTRepositoryTest {
         coEvery { api.getGeneratedText(any()).isSuccessful } returns true
         coEvery { api.getGeneratedText(any()).body() } returns response
         val result = repository.getCompletionResponse("What is the age of the Universe?")
-        Assert.assertEquals(result, "The Universe is too old for this flutter shit.")
+        Assert.assertEquals(result.choices[0].text, "The Universe is too old for this flutter shit.")
     }
 
     @Test
@@ -33,7 +33,7 @@ class ChatGPTRepositoryTest {
         coEvery { api.getGeneratedText(any()).isSuccessful } returns true
         coEvery { api.getGeneratedText(any()).body() } returns response
         val result = repository.getCompletionResponse("What is the age of the Universe?")
-        Assert.assertEquals(result, "")
+        Assert.assertEquals(result.choices[0].text, "")
     }
 
     @Test
@@ -41,6 +41,6 @@ class ChatGPTRepositoryTest {
         coEvery { api.getGeneratedText(any()).isSuccessful } returns false
         coEvery { api.getGeneratedText(any()).code() } returns 400
         val result = repository.getCompletionResponse("What is the age of the Universe?")
-        Assert.assertEquals(result, "Error Code = 400")
+        Assert.assertEquals(result.choices[0].text, "Error Code = 400")
     }
 }
