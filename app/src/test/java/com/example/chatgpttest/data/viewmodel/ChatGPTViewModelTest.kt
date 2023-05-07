@@ -30,7 +30,7 @@ class ChatGPTViewModelTest {
 
     @Test
     fun testAddConversation() = runTest {
-        coEvery { repository.getCompletionResponse(any()) } returns ChatGPTResponse(
+        coEvery { repository.getCompletionResponse(any(), any(), any()) } returns ChatGPTResponse(
             id = "error_id",
             choices = listOf(
                 ChatGPTChoice(
@@ -55,6 +55,27 @@ class ChatGPTViewModelTest {
         viewModel.updateChat(ChatGPTChoice(text = "How are you?", index = 0))
         viewModel.resetChat()
         Assert.assertEquals(viewModel.conversationsState.value.size, 0)
+    }
+    @Test
+    fun testAddFlow() = runTest {
+        coEvery { repository.getCompletionResponse(any(), any(), any()) } returns ChatGPTResponse(
+            id = "error_id",
+            choices = listOf(
+                ChatGPTChoice(
+                    text = "I'm good, thanks.",
+                    finish_reason = "",
+                    index = 0,
+                    logprobs = null
+                )
+            ),
+            objectType = "error_object"
+        )
+        viewModel.updateChatStream(ChatGPTChoice(text = "How are you?", index = 0))
+        advanceUntilIdle()
+        val result = viewModel.conversationsState.value
+        Assert.assertEquals(result.size, 2)
+        Assert.assertEquals(result[0].text, "How are you?")
+        Assert.assertEquals(result[1].text, "Typing...")
     }
 
 }

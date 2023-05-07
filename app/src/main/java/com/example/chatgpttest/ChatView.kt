@@ -28,7 +28,7 @@ fun ChatScreen(
     Column(modifier = Modifier.fillMaxSize()) {
         ChatList(
             chatGPTViewModel = chatGPTViewModel,
-            modifier = Modifier.height(760.dp),
+            modifier = Modifier.height(700.dp),
         )
         CharInput(
             chatGPTViewModel = chatGPTViewModel,
@@ -109,7 +109,7 @@ fun CharInput(
     }
 
     fun sendMessage() {
-        chatGPTViewModel.updateChat(
+        chatGPTViewModel.updateChatStream(
             ChatGPTChoice(
                 value,
                 index = 0,
@@ -125,7 +125,7 @@ fun CharInput(
     ) {
         TextField(
             modifier = Modifier.weight(1f),
-            value = "create a poem about king's day in Netherland.",
+            value = value,
             onValueChange = { value = it },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
             keyboardActions = KeyboardActions { sendMessage() },

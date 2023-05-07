@@ -6,10 +6,10 @@ data class ChatGPTPayload(
     val model: String = "text-davinci-003",
     val prompt: String,
     val maxTokens: Int,
-    val n: Int = 10,
+    val n: Int = 1,
     val stream: Boolean = false,
     val temperature: Double = 2.0,
-    val top_p: Int = 1,
+    val top_p: Double = 1.0,
     val stop: String? = null,
     val messages: List<ChatGPTMessage>
 )
