@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.example.chatgpttest.model.Choice
+import com.example.chatgpttest.model.ChatGPTChoice
 import com.example.chatgpttest.viewmodel.ChatGPTViewModel
 
 @Composable
@@ -28,7 +28,7 @@ fun ChatScreen(
     Column(modifier = Modifier.fillMaxSize()) {
         ChatList(
             chatGPTViewModel = chatGPTViewModel,
-            modifier = Modifier.height(760.dp),
+            modifier = Modifier.height(700.dp),
         )
         CharInput(
             chatGPTViewModel = chatGPTViewModel,
@@ -42,7 +42,7 @@ fun ChatList(
     chatGPTViewModel: ChatGPTViewModel,
     modifier: Modifier = Modifier,
 ) {
-    val conversations: List<Choice> by chatGPTViewModel.conversationsState.collectAsState()
+    val conversations: List<ChatGPTChoice> by chatGPTViewModel.conversationsState.collectAsState()
 
     Box(modifier = Modifier) {
         Box(
@@ -51,7 +51,7 @@ fun ChatList(
         ) {
             LazyColumn {
                 items(conversations.size) { item ->
-                    ChatBubbleView(item % 2 == 0, Choice(conversations[item].text))
+                    ChatBubbleView(!conversations[item].isChatGPT, conversations[item].text)
                 }
             }
         }
@@ -60,7 +60,7 @@ fun ChatList(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatBubbleView(isLeft: Boolean, message: Choice) {
+fun ChatBubbleView(isLeft: Boolean, message: String) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -80,7 +80,7 @@ fun ChatBubbleView(isLeft: Boolean, message: Choice) {
         ) {
             Text(
                 modifier = Modifier.padding(8.dp),
-                text = message.text,
+                text = message,
                 color = when {
                     !isLeft -> MaterialTheme.colorScheme.onPrimary
                     else -> MaterialTheme.colorScheme.onSecondary
@@ -109,7 +109,14 @@ fun CharInput(
     }
 
     fun sendMessage() {
-        chatGPTViewModel.updateChat(Choice(value))
+        chatGPTViewModel.updateChatStream(
+            ChatGPTChoice(
+                value,
+                index = 0,
+                logprobs = null,
+                finish_reason = "user message"
+            )
+        )
         value = ""
     }
     Row(

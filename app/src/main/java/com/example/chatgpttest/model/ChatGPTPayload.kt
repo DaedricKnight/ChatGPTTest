@@ -8,8 +8,8 @@ data class ChatGPTPayload(
     val maxTokens: Int,
     val n: Int = 1,
     val stream: Boolean = false,
-    val temperature: Double = 1.0,
-    val top_p: Int = 1,
+    val temperature: Double = 2.0,
+    val top_p: Double = 1.0,
     val stop: String? = null,
     val messages: List<ChatGPTMessage>
 )
@@ -25,5 +25,7 @@ fun ChatGPTPayload.toJson(): JsonObject {
     json.addProperty("stream", stream)
     json.addProperty("model", model)
     json.addProperty("prompt", prompt)
+    json.addProperty("n", n)
+    json.addProperty("max_tokens", maxTokens)
     return json
 }
