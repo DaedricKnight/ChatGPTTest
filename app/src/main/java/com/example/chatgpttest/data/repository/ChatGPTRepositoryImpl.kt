@@ -6,12 +6,9 @@ import com.example.chatgpttest.model.*
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.channels.ProducerScope
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import org.json.JSONException
 import org.json.JSONObject
 import javax.inject.Inject
@@ -70,65 +67,52 @@ class ChatGPTRepositoryImpl @Inject constructor(private val chatGPTApi: ChatGPTA
         }
     }
 
-    //Describe 3 marvel heroes.
     override suspend fun getMessagesFlow(inputText: String, maxTokens: Int, n: Int): Flow<String> =
-        callbackFlow {
-            withContext(Dispatchers.IO) {
-                processMessages(inputText, maxTokens, n)
-            }
-        }
-
-    private fun ProducerScope<String>.processMessages(
-        inputText: String,
-        maxTokens: Int,
-        n: Int
-    ) {
-        val requestBody = ChatGPTPayload(
-            prompt = inputText,
-            maxTokens = maxTokens,
-            n = n,
-            stream = true,
-            temperature = temperature,
-            messages = listOf(
-                ChatGPTMessage(
-                    role = Role.user,
-                    content = inputText
+        flow {
+            val requestBody = ChatGPTPayload(
+                prompt = inputText,
+                maxTokens = maxTokens,
+                n = n,
+                stream = true,
+                temperature = temperature,
+                messages = listOf(
+                    ChatGPTMessage(
+                        role = Role.user,
+                        content = inputText
+                    )
                 )
             )
-        )
-        val response = chatGPTApi.getFlowText(requestBody.toJson()).execute()
-        if (response.isSuccessful && response.body() != null) {
-            response.body()?.byteStream()?.bufferedReader()?.use { input ->
-                generateSequence { input.readLine() }.forEachIndexed { index, line ->
-                    if (line == dataDone) {
-                        close()
-                        return@use
-                    } else if (line.startsWith(dataPrefix)) {
-                        try {
-                            val value = lookupDataFromResponse(line)
-                            if (value.isNotEmpty() && index < 3) {
-                                trySend(value.replace("\n", ""))
-                            } else {
-                                trySend(value)
+            val response = chatGPTApi.getFlowText(requestBody.toJson()).execute()
+            if (response.isSuccessful && response.body() != null) {
+                response.body()?.byteStream()?.bufferedReader()?.use { input ->
+                    generateSequence { input.readLine() }.forEachIndexed { index, line ->
+                        if (line == dataDone) {
+                            return@use
+                        } else if (line.startsWith(dataPrefix)) {
+                            try {
+                                val value = lookupDataFromResponse(line)
+                                if (value.isNotEmpty() && index < 3) {
+                                    emit(value.replace("\n", ""))
+                                } else {
+                                    emit(value)
+                                }
+                            } catch (e: Exception) {
+                                e.printStackTrace()
                             }
-                        } catch (e: Exception) {
-                            e.printStackTrace()
                         }
                     }
                 }
+            } else {
+                val errorBody = response.errorBody()?.string() ?: ""
+                val errorMessage = try {
+                    JSONObject(errorBody).toString()
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                    unableToParseText
+                }
+                emit("Failure! Try again. Error: $errorMessage")
             }
-        } else {
-            val errorBody = response.errorBody()?.string()
-            val errorMessage = try {
-                JSONObject(errorBody).toString()
-            } catch (e: JSONException) {
-                e.printStackTrace()
-                unableToParseText
-            }
-            trySend("Failure! Try again. Error: $errorMessage")
-            close()
-        }
-    }
+        }.flowOn(Dispatchers.IO)
 
     private fun lookupDataFromResponse(jsonString: String): String {
         val dataPrefix = dataPrefix
