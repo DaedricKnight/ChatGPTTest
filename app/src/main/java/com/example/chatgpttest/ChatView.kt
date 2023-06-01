@@ -28,11 +28,11 @@ fun ChatScreen(
     Column(modifier = Modifier.fillMaxSize()) {
         ChatList(
             chatGPTViewModel = chatGPTViewModel,
-            modifier = Modifier.height(700.dp),
+            modifier = Modifier.weight(1f),
         )
         CharInput(
             chatGPTViewModel = chatGPTViewModel,
-            modifier = Modifier
+            modifier = Modifier.weight(1f),
         )
     }
 }
@@ -58,7 +58,6 @@ fun ChatList(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatBubbleView(isLeft: Boolean, message: String) {
     Column(
@@ -71,8 +70,7 @@ fun ChatBubbleView(isLeft: Boolean, message: String) {
         },
     ) {
         Card(
-            modifier = Modifier
-                .widthIn(max = 340.dp),
+            modifier = Modifier.widthIn(max = 340.dp),
             shape = cardShapeFor(isLeft),
             colors = CardDefaults.cardColors(
                 containerColor = if (isLeft) Color(0xFF1E88E5) else Color(0xFF7CB342),
@@ -131,7 +129,7 @@ fun CharInput(
             keyboardActions = KeyboardActions { sendMessage() },
         )
         Button(
-            modifier = Modifier.height(58.dp),
+            modifier = Modifier.height(64.dp),
             onClick = { sendMessage() },
             enabled = value.isNotBlank(),
         ) {
