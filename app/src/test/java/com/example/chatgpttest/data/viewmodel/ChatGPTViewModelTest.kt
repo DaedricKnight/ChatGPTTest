@@ -1,8 +1,6 @@
 package com.example.chatgpttest.data.viewmodel
 
-import com.example.chatgpttest.data.repository.ChatGPTRepository
-import com.example.chatgpttest.model.ChatGPTChoice
-import com.example.chatgpttest.model.ChatGPTResponse
+import com.example.chatgpttest.domain.repository.ChatGPTRepository
 import com.example.chatgpttest.viewmodel.ChatGPTViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -31,10 +29,10 @@ class ChatGPTViewModelTest {
 
     @Test
     fun testAddConversation() = runTest {
-        coEvery { repository.getCompletionResponse(any(), any(), any()) } returns ChatGPTResponse(
+        coEvery { repository.getCompletionResponse(any(), any(), any()) } returns com.example.chatgpttest.domain.model.ChatGPTResponse(
             id = "success_id",
             choices = listOf(
-                ChatGPTChoice(
+                com.example.chatgpttest.domain.model.ChatGPTChoice(
                     text = "I'm good, thanks.",
                     finish_reason = "",
                     index = 0,
@@ -43,7 +41,12 @@ class ChatGPTViewModelTest {
             ),
             objectType = "success_object"
         )
-        viewModel.updateChat(ChatGPTChoice(text = "How are you?", index = 0))
+        viewModel.updateChat(
+            com.example.chatgpttest.domain.model.ChatGPTChoice(
+                text = "How are you?",
+                index = 0
+            )
+        )
         advanceUntilIdle()
         val result = viewModel.conversationsState.value
         Assert.assertEquals(result.size, 2)
@@ -53,12 +56,17 @@ class ChatGPTViewModelTest {
 
     @Test
     fun testEmptyConversation() = runTest {
-        coEvery { repository.getCompletionResponse(any(), any(), any()) } returns ChatGPTResponse(
+        coEvery { repository.getCompletionResponse(any(), any(), any()) } returns com.example.chatgpttest.domain.model.ChatGPTResponse(
             id = "empty_id",
             choices = listOf(),
             objectType = "empty_object"
         )
-        viewModel.updateChat(ChatGPTChoice(text = "How are you?", index = 0))
+        viewModel.updateChat(
+            com.example.chatgpttest.domain.model.ChatGPTChoice(
+                text = "How are you?",
+                index = 0
+            )
+        )
         advanceUntilIdle()
         val result = viewModel.conversationsState.value
         Assert.assertEquals(result.size, 1)
@@ -67,7 +75,12 @@ class ChatGPTViewModelTest {
 
     @Test
     fun testResetChat() = runTest {
-        viewModel.updateChat(ChatGPTChoice(text = "How are you?", index = 0))
+        viewModel.updateChat(
+            com.example.chatgpttest.domain.model.ChatGPTChoice(
+                text = "How are you?",
+                index = 0
+            )
+        )
         viewModel.resetChat()
         Assert.assertEquals(viewModel.conversationsState.value.size, 0)
     }
@@ -81,7 +94,12 @@ class ChatGPTViewModelTest {
                 any()
             )
         } returns flowOf()
-        viewModel.updateChatStream(ChatGPTChoice(text = "How are you?", index = 0))
+        viewModel.updateChatStream(
+            com.example.chatgpttest.domain.model.ChatGPTChoice(
+                text = "How are you?",
+                index = 0
+            )
+        )
         advanceUntilIdle()
         val result = viewModel.conversationsState.value
         Assert.assertEquals(result.size, 2)
@@ -98,7 +116,12 @@ class ChatGPTViewModelTest {
                 any()
             )
         } returns flowOf("")
-        viewModel.updateChatStream(ChatGPTChoice(text = "How are you?", index = 0))
+        viewModel.updateChatStream(
+            com.example.chatgpttest.domain.model.ChatGPTChoice(
+                text = "How are you?",
+                index = 0
+            )
+        )
         advanceUntilIdle()
         val result = viewModel.conversationsState.value
         Assert.assertEquals(result.size, 2)
@@ -115,7 +138,12 @@ class ChatGPTViewModelTest {
                 any()
             )
         } returns flowOf("I'm good, thanks.", " And you?")
-        viewModel.updateChatStream(ChatGPTChoice(text = "How are you?", index = 0))
+        viewModel.updateChatStream(
+            com.example.chatgpttest.domain.model.ChatGPTChoice(
+                text = "How are you?",
+                index = 0
+            )
+        )
         advanceUntilIdle()
         val result = viewModel.conversationsState.value
         Assert.assertEquals(result.size, 2)

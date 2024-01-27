@@ -1,13 +1,17 @@
 package com.example.chatgpttest.data.repository
 
-import com.example.chatgpttest.model.*
+import com.example.chatgpttest.domain.model.ChatGPTMessage
+import com.example.chatgpttest.domain.model.ChatGPTPayload
+import com.example.chatgpttest.domain.model.ChatGPTResponse
+import com.example.chatgpttest.domain.model.Choice
+import com.example.chatgpttest.domain.model.Role
 import com.google.gson.Gson
 import okhttp3.Headers.Companion.toHeaders
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
-import okio.IOException
+import java.io.IOException
 
 private const val apiKey = "YOUR-API-KEY"
 private const val apiUrl = "https://api.openai.com/v1/completions"

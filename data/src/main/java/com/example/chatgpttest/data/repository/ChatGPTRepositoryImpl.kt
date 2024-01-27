@@ -1,8 +1,21 @@
 package com.example.chatgpttest.data.repository
 
-import com.example.chatgpttest.constants.*
 import com.example.chatgpttest.data.api.ChatGPTApi
-import com.example.chatgpttest.model.*
+import com.example.chatgpttest.data.constants.choicesDes
+import com.example.chatgpttest.data.constants.dataDone
+import com.example.chatgpttest.data.constants.dataPrefix
+import com.example.chatgpttest.data.constants.emptyResponse
+import com.example.chatgpttest.data.constants.errorId
+import com.example.chatgpttest.data.constants.errorObject
+import com.example.chatgpttest.data.constants.temperature
+import com.example.chatgpttest.data.constants.textDes
+import com.example.chatgpttest.data.constants.unableToParseText
+import com.example.chatgpttest.domain.repository.ChatGPTRepository
+import com.example.chatgpttest.domain.model.ChatGPTMessage
+import com.example.chatgpttest.domain.model.ChatGPTPayload
+import com.example.chatgpttest.domain.model.ChatGPTResponse
+import com.example.chatgpttest.domain.model.Role
+import com.example.chatgpttest.domain.model.toJson
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
@@ -43,7 +56,7 @@ class ChatGPTRepositoryImpl @Inject constructor(private val chatGPTApi: ChatGPTA
                 ChatGPTResponse(
                     id = errorId,
                     choices = listOf(
-                        ChatGPTChoice(
+                        com.example.chatgpttest.domain.model.ChatGPTChoice(
                             text = emptyResponse,
                             index = 1,
                             isChatGPT = true
@@ -56,7 +69,7 @@ class ChatGPTRepositoryImpl @Inject constructor(private val chatGPTApi: ChatGPTA
             ChatGPTResponse(
                 id = errorId,
                 choices = listOf(
-                    ChatGPTChoice(
+                    com.example.chatgpttest.domain.model.ChatGPTChoice(
                         text = "Error Code = ${response.code()}, message = ${response.message()}",
                         index = 1,
                         isChatGPT = true

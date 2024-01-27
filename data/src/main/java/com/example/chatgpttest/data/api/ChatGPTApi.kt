@@ -1,7 +1,7 @@
 package com.example.chatgpttest.data.api
 
-import com.example.chatgpttest.constants.CompletionsEndpoint
-import com.example.chatgpttest.model.ChatGPTResponse
+import com.example.chatgpttest.data.constants.CompletionsEndpoint
+import com.example.chatgpttest.domain.model.ChatGPTResponse
 import com.google.gson.JsonObject
 import okhttp3.ResponseBody
 import retrofit2.Call

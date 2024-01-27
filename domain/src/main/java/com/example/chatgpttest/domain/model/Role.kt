@@ -1,4 +1,4 @@
-package com.example.chatgpttest.model
+package com.example.chatgpttest.domain.model
 
 import com.google.gson.annotations.SerializedName
 

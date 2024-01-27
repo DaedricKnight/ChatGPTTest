@@ -1,6 +1,6 @@
-package com.example.chatgpttest.di
+package com.example.chatgpttest.data.di
 
-import com.example.chatgpttest.data.repository.ChatGPTRepository
+import com.example.chatgpttest.domain.repository.ChatGPTRepository
 import com.example.chatgpttest.data.repository.ChatGPTRepositoryImpl
 import dagger.Binds
 import dagger.Module

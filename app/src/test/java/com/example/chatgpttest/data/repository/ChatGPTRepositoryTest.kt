@@ -2,6 +2,7 @@ package com.example.chatgpttest.data.repository
 
 import com.example.chatgpttest.data.api.ChatGPTApi
 import com.example.chatgpttest.data.model.FakeResponse
+import com.example.chatgpttest.domain.repository.ChatGPTRepository
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.toList

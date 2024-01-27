@@ -1,6 +1,6 @@
 package com.example.chatgpttest.data.repository
 
-import com.example.chatgpttest.constants.apiKey
+import com.example.chatgpttest.data.constants.apiKey
 import okhttp3.Interceptor
 import okhttp3.Response
 

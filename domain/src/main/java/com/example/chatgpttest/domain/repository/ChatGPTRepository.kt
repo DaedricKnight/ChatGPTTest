@@ -1,6 +1,6 @@
-package com.example.chatgpttest.data.repository
+package com.example.chatgpttest.domain.repository
 
-import com.example.chatgpttest.model.ChatGPTResponse
+import com.example.chatgpttest.domain.model.ChatGPTResponse
 import kotlinx.coroutines.flow.Flow
 
 interface ChatGPTRepository {

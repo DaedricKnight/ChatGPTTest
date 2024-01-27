@@ -1,7 +1,7 @@
-package com.example.chatgpttest.di
+package com.example.chatgpttest.data.di
 
-import com.example.chatgpttest.constants.baseUrl
 import com.example.chatgpttest.data.api.ChatGPTApi
+import com.example.chatgpttest.data.constants.baseUrl
 import com.example.chatgpttest.data.repository.AuthenticationInterceptor
 import dagger.Module
 import dagger.Provides

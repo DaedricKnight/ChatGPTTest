@@ -1,4 +1,4 @@
-package com.example.chatgpttest
+package com.example.chatgpttest.activity
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelProvider
+import com.example.chatgpttest.ChatScreen
 import com.example.chatgpttest.di.DaggerApplicationComponent
 import com.example.chatgpttest.ui.theme.ChatGPTTestTheme
 import com.example.chatgpttest.viewmodel.ChatGPTViewModel

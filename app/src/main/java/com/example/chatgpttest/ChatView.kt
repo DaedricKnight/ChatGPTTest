@@ -18,7 +18,6 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.example.chatgpttest.model.ChatGPTChoice
 import com.example.chatgpttest.viewmodel.ChatGPTViewModel
 
 @Composable
@@ -42,7 +41,7 @@ fun ChatList(
     chatGPTViewModel: ChatGPTViewModel,
     modifier: Modifier = Modifier,
 ) {
-    val conversations: List<ChatGPTChoice> by chatGPTViewModel.conversationsState.collectAsState()
+    val conversations: List<com.example.chatgpttest.domain.model.ChatGPTChoice> by chatGPTViewModel.conversationsState.collectAsState()
 
     Box(modifier = Modifier) {
         Box(
@@ -58,6 +57,7 @@ fun ChatList(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatBubbleView(isLeft: Boolean, message: String) {
     Column(
@@ -108,7 +108,7 @@ fun CharInput(
 
     fun sendMessage() {
         chatGPTViewModel.updateChatStream(
-            ChatGPTChoice(
+            com.example.chatgpttest.domain.model.ChatGPTChoice(
                 value,
                 index = 0,
                 logprobs = null,
