@@ -3,6 +3,8 @@ package com.example.chatgpttest.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.chatgpttest.data.constants.errorTag
+import com.example.chatgpttest.domain.model.ChatGPTChoice
 import com.example.chatgpttest.domain.usecase.GetCompletionResponseUseCase
 import com.example.chatgpttest.domain.usecase.GetMessagesFlowUseCase
 import kotlinx.coroutines.flow.Flow
@@ -18,21 +20,21 @@ class ChatGPTViewModel @Inject constructor(
     private val getMessagesFlowUseCase: GetMessagesFlowUseCase
 ) : ViewModel() {
 
-    private val _conversations: MutableStateFlow<MutableList<com.example.chatgpttest.domain.model.ChatGPTChoice>> =
+    private val _conversations: MutableStateFlow<MutableList<ChatGPTChoice>> =
         MutableStateFlow(
             mutableListOf()
         )
-    val conversationsState: StateFlow<MutableList<com.example.chatgpttest.domain.model.ChatGPTChoice>> =
+    val conversationsState: StateFlow<MutableList<ChatGPTChoice>> =
         _conversations.asStateFlow()
 
     fun resetChat() {
         _conversations.value.clear()
     }
 
-    fun updateChat(choice: com.example.chatgpttest.domain.model.ChatGPTChoice) {
+    fun updateChat(choice: ChatGPTChoice) {
         viewModelScope.launch {
             changeMessage(choice, isAdding = true)
-            val typing = com.example.chatgpttest.domain.model.ChatGPTChoice(
+            val typing = ChatGPTChoice(
                 "Typing...",
                 index = 0,
                 isChatGPT = true
@@ -42,7 +44,7 @@ class ChatGPTViewModel @Inject constructor(
             changeMessage(typing, isAdding = false)
             for (i in result.choices.indices) {
                 changeMessage(
-                    com.example.chatgpttest.domain.model.ChatGPTChoice(
+                    ChatGPTChoice(
                         result.choices[i].text.trim(),
                         index = 1 + i,
                         isChatGPT = true
@@ -52,10 +54,10 @@ class ChatGPTViewModel @Inject constructor(
         }
     }
 
-    fun updateChatStream(choice: com.example.chatgpttest.domain.model.ChatGPTChoice) {
+    fun updateChatStream(choice: ChatGPTChoice) {
         viewModelScope.launch {
             changeMessage(choice, isAdding = true)
-            val typing = com.example.chatgpttest.domain.model.ChatGPTChoice(
+            val typing = ChatGPTChoice(
                 "Typing...",
                 index = 0,
                 isChatGPT = true
@@ -77,7 +79,7 @@ class ChatGPTViewModel @Inject constructor(
 
     private fun addAnswer(stringResult: String, index: Int, isAdding: Boolean) {
         changeMessage(
-            com.example.chatgpttest.domain.model.ChatGPTChoice(
+            ChatGPTChoice(
                 stringResult,
                 index = index,
                 isChatGPT = true
@@ -86,7 +88,7 @@ class ChatGPTViewModel @Inject constructor(
     }
 
     private fun changeMessage(
-        choice: com.example.chatgpttest.domain.model.ChatGPTChoice,
+        choice: ChatGPTChoice,
         isAdding: Boolean
     ) {
         val newList = _conversations.value.toMutableList()
@@ -97,7 +99,7 @@ class ChatGPTViewModel @Inject constructor(
                 newList.remove(choice)
             } catch (error: IndexOutOfBoundsException) {
                 Log.d(
-                    com.example.chatgpttest.data.constants.errorTag,
+                    errorTag,
                     "$error. Please, do not remove message from empty list."
                 )
             }
