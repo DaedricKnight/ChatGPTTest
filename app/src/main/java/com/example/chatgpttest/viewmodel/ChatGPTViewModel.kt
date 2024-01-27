@@ -3,20 +3,27 @@ package com.example.chatgpttest.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.chatgpttest.data.constants.errorTag
-import com.example.chatgpttest.domain.repository.ChatGPTRepository
-import kotlinx.coroutines.flow.*
+import com.example.chatgpttest.domain.usecase.GetCompletionResponseUseCase
+import com.example.chatgpttest.domain.usecase.GetMessagesFlowUseCase
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ChatGPTViewModel @Inject constructor(
-    private val repository: ChatGPTRepository
+    private val getCompletionResponseUseCase: GetCompletionResponseUseCase,
+    private val getMessagesFlowUseCase: GetMessagesFlowUseCase
 ) : ViewModel() {
 
-    private val _conversations: MutableStateFlow<MutableList<com.example.chatgpttest.domain.model.ChatGPTChoice>> = MutableStateFlow(
-        mutableListOf()
-    )
-    val conversationsState: StateFlow<MutableList<com.example.chatgpttest.domain.model.ChatGPTChoice>> = _conversations.asStateFlow()
+    private val _conversations: MutableStateFlow<MutableList<com.example.chatgpttest.domain.model.ChatGPTChoice>> =
+        MutableStateFlow(
+            mutableListOf()
+        )
+    val conversationsState: StateFlow<MutableList<com.example.chatgpttest.domain.model.ChatGPTChoice>> =
+        _conversations.asStateFlow()
 
     fun resetChat() {
         _conversations.value.clear()
@@ -31,7 +38,7 @@ class ChatGPTViewModel @Inject constructor(
                 isChatGPT = true
             )
             changeMessage(typing, isAdding = true)
-            val result = repository.getCompletionResponse(choice.text, 100, 10)
+            val result = getCompletionResponseUseCase.getCompletionResponse(choice.text, 100, 10)
             changeMessage(typing, isAdding = false)
             for (i in result.choices.indices) {
                 changeMessage(
@@ -54,7 +61,8 @@ class ChatGPTViewModel @Inject constructor(
                 isChatGPT = true
             )
             changeMessage(typing, isAdding = true)
-            val flowResult: Flow<String> = repository.getMessagesFlow(choice.text, 2048, 1)
+            val flowResult: Flow<String> =
+                getMessagesFlowUseCase.getMessageFlow(choice.text, 2048, 1)
             var stringResult = ""
             flowResult.collectIndexed { index, value ->
                 if (index == 0) {
@@ -77,7 +85,10 @@ class ChatGPTViewModel @Inject constructor(
         )
     }
 
-    private fun changeMessage(choice: com.example.chatgpttest.domain.model.ChatGPTChoice, isAdding: Boolean) {
+    private fun changeMessage(
+        choice: com.example.chatgpttest.domain.model.ChatGPTChoice,
+        isAdding: Boolean
+    ) {
         val newList = _conversations.value.toMutableList()
         if (isAdding) {
             newList.add(choice)

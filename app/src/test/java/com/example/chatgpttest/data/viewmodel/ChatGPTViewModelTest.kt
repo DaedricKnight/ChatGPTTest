@@ -1,6 +1,10 @@
 package com.example.chatgpttest.data.viewmodel
 
+import com.example.chatgpttest.domain.model.ChatGPTChoice
+import com.example.chatgpttest.domain.model.ChatGPTResponse
 import com.example.chatgpttest.domain.repository.ChatGPTRepository
+import com.example.chatgpttest.domain.usecase.GetCompletionResponseUseCase
+import com.example.chatgpttest.domain.usecase.GetMessagesFlowUseCase
 import com.example.chatgpttest.viewmodel.ChatGPTViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -19,20 +23,27 @@ class ChatGPTViewModelTest {
     @get:Rule
     var mainCoroutineRule = TestCoroutineRule()
 
-    private val repository = mockk<ChatGPTRepository>(relaxed = true)
+    private val getCompletionResponseUseCase = mockk<GetCompletionResponseUseCase>(relaxed = true)
+    private val getMessagesFlowUseCase = mockk<GetMessagesFlowUseCase>(relaxed = true)
     private lateinit var viewModel: ChatGPTViewModel
 
     @Before
     fun setup() {
-        viewModel = ChatGPTViewModel(repository)
+        viewModel = ChatGPTViewModel(getCompletionResponseUseCase, getMessagesFlowUseCase)
     }
 
     @Test
     fun testAddConversation() = runTest {
-        coEvery { repository.getCompletionResponse(any(), any(), any()) } returns com.example.chatgpttest.domain.model.ChatGPTResponse(
+        coEvery {
+            getCompletionResponseUseCase.getCompletionResponse(
+                any(),
+                any(),
+                any()
+            )
+        } returns ChatGPTResponse(
             id = "success_id",
             choices = listOf(
-                com.example.chatgpttest.domain.model.ChatGPTChoice(
+                ChatGPTChoice(
                     text = "I'm good, thanks.",
                     finish_reason = "",
                     index = 0,
@@ -42,7 +53,7 @@ class ChatGPTViewModelTest {
             objectType = "success_object"
         )
         viewModel.updateChat(
-            com.example.chatgpttest.domain.model.ChatGPTChoice(
+            ChatGPTChoice(
                 text = "How are you?",
                 index = 0
             )
@@ -56,13 +67,19 @@ class ChatGPTViewModelTest {
 
     @Test
     fun testEmptyConversation() = runTest {
-        coEvery { repository.getCompletionResponse(any(), any(), any()) } returns com.example.chatgpttest.domain.model.ChatGPTResponse(
+        coEvery {
+            getCompletionResponseUseCase.getCompletionResponse(
+                any(),
+                any(),
+                any()
+            )
+        } returns ChatGPTResponse(
             id = "empty_id",
             choices = listOf(),
             objectType = "empty_object"
         )
         viewModel.updateChat(
-            com.example.chatgpttest.domain.model.ChatGPTChoice(
+            ChatGPTChoice(
                 text = "How are you?",
                 index = 0
             )
@@ -76,7 +93,7 @@ class ChatGPTViewModelTest {
     @Test
     fun testResetChat() = runTest {
         viewModel.updateChat(
-            com.example.chatgpttest.domain.model.ChatGPTChoice(
+            ChatGPTChoice(
                 text = "How are you?",
                 index = 0
             )
@@ -88,14 +105,14 @@ class ChatGPTViewModelTest {
     @Test
     fun testEmptyFlow() = runTest {
         coEvery {
-            repository.getMessagesFlow(
+            getMessagesFlowUseCase.getMessageFlow(
                 any(),
                 any(),
                 any()
             )
         } returns flowOf()
         viewModel.updateChatStream(
-            com.example.chatgpttest.domain.model.ChatGPTChoice(
+            ChatGPTChoice(
                 text = "How are you?",
                 index = 0
             )
@@ -110,14 +127,14 @@ class ChatGPTViewModelTest {
     @Test
     fun testEmptyStringFlow() = runTest {
         coEvery {
-            repository.getMessagesFlow(
+            getMessagesFlowUseCase.getMessageFlow(
                 any(),
                 any(),
                 any()
             )
         } returns flowOf("")
         viewModel.updateChatStream(
-            com.example.chatgpttest.domain.model.ChatGPTChoice(
+            ChatGPTChoice(
                 text = "How are you?",
                 index = 0
             )
@@ -132,14 +149,14 @@ class ChatGPTViewModelTest {
     @Test
     fun testAddFlow() = runTest {
         coEvery {
-            repository.getMessagesFlow(
+            getMessagesFlowUseCase.getMessageFlow(
                 any(),
                 any(),
                 any()
             )
         } returns flowOf("I'm good, thanks.", " And you?")
         viewModel.updateChatStream(
-            com.example.chatgpttest.domain.model.ChatGPTChoice(
+            ChatGPTChoice(
                 text = "How are you?",
                 index = 0
             )

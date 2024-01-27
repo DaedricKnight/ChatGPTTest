@@ -1,7 +1,8 @@
-package com.example.chatgpttest.data.repository
+package com.example.chatgpttest.data
 
 import com.example.chatgpttest.data.api.ChatGPTApi
 import com.example.chatgpttest.data.model.FakeResponse
+import com.example.chatgpttest.data.repository.ChatGPTRepositoryImpl
 import com.example.chatgpttest.domain.repository.ChatGPTRepository
 import io.mockk.coEvery
 import io.mockk.mockk
